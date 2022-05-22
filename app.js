@@ -97,6 +97,19 @@ Creature.prototype.compareDiet = function(human) {
     }
 }
 
+//Create random facts
+Creature.prototype.randomFacts = function() {
+    let factsArray = [
+        this.compareHeight(human),
+        this.compareWeight(human),
+        this.compareDiet(human),
+        this.when,
+        this.where,
+        this.fact
+    ]
+    return factsArray[Math.floor(Math.random() * factsArray.length)];
+}
+
 // Generate Tiles for each Dino in Array
 
 // Add tiles to DOM
