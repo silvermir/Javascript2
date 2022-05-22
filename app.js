@@ -10,7 +10,6 @@ function Creature(species, weight, height, diet, where, when, fact, name) {
     this.name = name;
 }
 
-
 // Create Dino Objects
 let dinos = [];
 
@@ -22,7 +21,7 @@ function createDino() {
         .then(function({ Dinos }) {
             Dinos.map(function(dinosaurs) {
                 let dino = new Creature(...Object.values(dinosaurs));
-                dinos.push(dino)
+                dinos.push(dino);
             })
         })
 };
@@ -32,12 +31,11 @@ createDino();
 // Create Human Object
 
 let human = [];
-console.log(human)
 
 function createHuman(formHumanData) {
     formHumanData.map(function(humanData) {
         let creatureHuman = new Creature(...Object.values(humanData));
-        human.push(creatureHuman)
+        human.push(creatureHuman);
     })
 };
 
@@ -63,25 +61,25 @@ document.getElementById("btn").addEventListener("click", function() {
 // NOTE: Weight in JSON file is in lbs, height in inches. 
 Creature.prototype.compareHeight = function(human) {
     if (human[0].height > this.height) {
-        return `${human[0].name} is ${human[0].height - this.height}taller than ${this.species}`
+        return `${human[0].name} is ${human[0].height - this.height} inches taller than ${this.species}`
     } else if (human[0].height < this.height) {
-        return `${this.species} is ${this.height - human[0].height}taller than ${human[0].name}`
+        return `${this.species} is ${this.height - human[0].height} smaller than ${human[0].name}`
     } else {
         return `${human[0].name} and ${this.species} are the same size`
     }
-}
+};
 
 // Create Dino Compare Method 2
 // NOTE: Weight in JSON file is in lbs, height in inches.
 Creature.prototype.compareWeight = function(human) {
     if (human[0].weight > this.weight) {
-        return `${human[0].name} weighs ${human[0].weight - this.weight}more than ${this.species}`
+        return `${human[0].name} weighs ${human[0].weight - this.weight} lbs more than ${this.species}`
     } else if (human[0].weight < this.weight) {
-        return `${this.species} weighs ${this.weight - human[0].weight}less than ${human[0].name}`
+        return `${this.species} weighs ${this.weight - human[0].weight} lbs less than ${human[0].name}`
     } else {
         return `${human[0].name} and ${this.species} weigh the same`
     }
-}
+};
 
 // Create Dino Compare Method 3
 // NOTE: Weight in JSON file is in lbs, height in inches.
@@ -89,15 +87,15 @@ Creature.prototype.compareDiet = function(human) {
     if (human[0].diet === this.diet) {
         return `${human[0].name} and ${this.species} has the same diet`
     } else if (this.diet === "Herbavor") {
-        return `${this.species} was a${this.diet}`
+        return `${this.species} was a ${this.diet}`
     } else if (this.diet === "Omnivor") {
-        return `${this.species} was a${this.diet}`
+        return `${this.species} was a ${this.diet}`
     } else {
-        return `${this.species} was a${this.diet}`
+        return `${this.species} was a ${this.diet}`
     }
-}
+};
 
-//Create random facts
+//Create 6 random facts
 Creature.prototype.randomFacts = function() {
     let factsArray = [
         this.compareHeight(human),
@@ -108,13 +106,43 @@ Creature.prototype.randomFacts = function() {
         this.fact
     ]
     return factsArray[Math.floor(Math.random() * factsArray.length)];
-}
+};
 
 // Generate Tiles for each Dino in Array
+function createTile() {
+    dinos.forEach(function(dino) {
+        console.log(dino)
+        let creatureTile = document.createElement("div");
+        creatureTile.classList.add("grid-item");
+        if (dino.species === "Human") {
+            creatureTile.innerHTML = `
+            <h3>${dino.name}</h3>
+            <img src="images/${dino.species.toLowerCase()}.png" alt="${dino.species} image"/>
+            `
+        } else if (dino.species === "Pigeon") {
+            creatureTile.innerHTML = `
+            <h2>${dino.species}</h2>
+            <p>${dino.fact}</p>
+            <img src="images/${dino.species.toLowerCase()}.png" alt="${dino.species} image"/>
+            `
+        } else {
+            creatureTile.innerHTML = `
+            <h2>${dino.species}</h2>
+            <p>${dino.randomFacts()}</p>
+            <img src="images/${dino.species.toLowerCase()}.png" alt="${dino.species} image"/>
+            `
+        }
+        document.getElementById("grid").appendChild(creatureTile);
+    })
+}
 
 // Add tiles to DOM
-
 // Remove form from screen
-
-
 // On button click, prepare and display infographic
+
+document.getElementById("dino-compare").addEventListener("submit", function(e) {
+    e.preventDefault();
+    dinos.splice(4, 0, human[0]);
+    createTile();
+    document.getElementById("dino-compare").remove();
+});
