@@ -61,15 +61,41 @@ document.getElementById("btn").addEventListener("click", function() {
 
 // Create Dino Compare Method 1
 // NOTE: Weight in JSON file is in lbs, height in inches. 
-
+Creature.prototype.compareHeight = function(human) {
+    if (human[0].height > this.height) {
+        return `${human[0].name} is ${human[0].height - this.height}taller than ${this.species}`
+    } else if (human[0].height < this.height) {
+        return `${this.species} is ${this.height - human[0].height}taller than ${human[0].name}`
+    } else {
+        return `${human[0].name} and ${this.species} are the same size`
+    }
+}
 
 // Create Dino Compare Method 2
 // NOTE: Weight in JSON file is in lbs, height in inches.
-
+Creature.prototype.compareWeight = function(human) {
+    if (human[0].weight > this.weight) {
+        return `${human[0].name} weighs ${human[0].weight - this.weight}more than ${this.species}`
+    } else if (human[0].weight < this.weight) {
+        return `${this.species} weighs ${this.weight - human[0].weight}less than ${human[0].name}`
+    } else {
+        return `${human[0].name} and ${this.species} weigh the same`
+    }
+}
 
 // Create Dino Compare Method 3
 // NOTE: Weight in JSON file is in lbs, height in inches.
-
+Creature.prototype.compareDiet = function(human) {
+    if (human[0].diet === this.diet) {
+        return `${human[0].name} and ${this.species} has the same diet`
+    } else if (this.diet === "Herbavor") {
+        return `${this.species} was a${this.diet}`
+    } else if (this.diet === "Omnivor") {
+        return `${this.species} was a${this.diet}`
+    } else {
+        return `${this.species} was a${this.diet}`
+    }
+}
 
 // Generate Tiles for each Dino in Array
 
