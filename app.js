@@ -24,7 +24,7 @@ function createDino() {
                 dinos.push(dino);
             })
         })
-};
+}
 
 createDino();
 
@@ -37,15 +37,15 @@ function createHuman(formHumanData) {
         let creatureHuman = new Creature(...Object.values(humanData));
         human.push(creatureHuman);
     })
-};
+}
 
 // Use IIFE to get human data from form
 document.getElementById("btn").addEventListener("click", function() {
     (function formHumanData() {
         let humanData = [{
             species: "Human",
-            weight: document.querySelector("#weight").value,
-            height: document.querySelector("#feet").value * 12 || document.querySelector("#inches").value,
+            weight: parseFloat(document.getElementById('weight').value),
+            height: parseFloat(document.querySelector("#feet").value) * 12 || parseFloat(document.querySelector("#inches").value),
             diet: document.querySelector("#diet").value,
             where: "",
             when: "",
@@ -60,10 +60,10 @@ document.getElementById("btn").addEventListener("click", function() {
 // Create Dino Compare Method 1
 // NOTE: Weight in JSON file is in lbs, height in inches. 
 Creature.prototype.compareHeight = function(human) {
-    if (human[0].height > this.height) {
-        return `${human[0].name} is ${human[0].height - this.height} inches taller than ${this.species}`
-    } else if (human[0].height < this.height) {
-        return `${this.species} is ${this.height - human[0].height} smaller than ${human[0].name}`
+    if (this.height > human[0].height) {
+        return `${this.species} is ${this.height - human[0].height} inches taller than ${human[0].name}`
+    } else if (this.height < human[0].height) {
+        return `${this.species} is ${human[0].height - this.height} inches smaller than ${human[0].name}`
     } else {
         return `${human[0].name} and ${this.species} are the same size`
     }
@@ -72,10 +72,10 @@ Creature.prototype.compareHeight = function(human) {
 // Create Dino Compare Method 2
 // NOTE: Weight in JSON file is in lbs, height in inches.
 Creature.prototype.compareWeight = function(human) {
-    if (human[0].weight > this.weight) {
-        return `${human[0].name} weighs ${human[0].weight - this.weight} lbs more than ${this.species}`
-    } else if (human[0].weight < this.weight) {
-        return `${this.species} weighs ${this.weight - human[0].weight} lbs less than ${human[0].name}`
+    if (this.weight > human[0].weight) {
+        return `${this.species} weighs ${this.weight - human[0].weight} lbs more than ${human[0].name}`
+    } else if (this.weight < human[0].weight) {
+        return `${this.species} weighs ${human[0].weight - this.weight} lbs less than ${human[0].name}`
     } else {
         return `${human[0].name} and ${this.species} weigh the same`
     }
@@ -111,7 +111,6 @@ Creature.prototype.randomFacts = function() {
 // Generate Tiles for each Dino in Array
 function createTile() {
     dinos.forEach(function(dino) {
-        console.log(dino)
         let creatureTile = document.createElement("div");
         creatureTile.classList.add("grid-item");
         if (dino.species === "Human") {
