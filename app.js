@@ -139,7 +139,7 @@ function createTile() {
 // Remove form from screen
 // On button click, prepare and display infographic
 
-document.getElementById("dino-compare").addEventListener("submit", function(e) {
+document.getElementById("btn").addEventListener("click", function(e) {
     e.preventDefault();
     dinos.splice(4, 0, human[0]);
     createTile();
