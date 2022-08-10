@@ -1,5 +1,5 @@
 let store = {
-    clickedRover: "",
+    clickedRover: "Spirit",
     roverData: "",
     roverPhotos: "",
     user: { name: "Martian" },
@@ -22,8 +22,7 @@ const render = async(root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod, user } = state
-
+    let { rovers, apod, user, roverData, clickedRover } = state
     return `
         <header></header>
         <main>
@@ -41,6 +40,8 @@ const App = (state) => {
                 </p>
                 ${ImageOfTheDay(apod)}
                 ${Buttons(rovers)}
+                ${roverManifest(roverData, clickedRover)}
+
             </section>
         </main>
         <footer></footer>
@@ -75,9 +76,25 @@ const Buttons = (rovers) => {
 }
 
 const selectedRover = (selectedRover) => {
-    updateStore(store, { clickedRover: selectedRover })
+    updateStore(store, { clickedRover: selectedRover });
+    getRoverManifest(selectedRover)
 
 }
+
+const roverManifest = (manifest, clickedRover) => {
+    if (!manifest) {
+        getRoverManifest(clickedRover)
+    }
+    let roverData = manifest && manifest.data.photo_manifest
+    return `<div>
+    <p>Name: ${roverData.name}</p>
+    <p>Launch Date: ${roverData.launch_date}</p>
+    <p>Landing Date: ${roverData.landing_date}</p>
+    <p>Status: ${roverData.status}</p>
+    </div>`
+
+}
+
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
