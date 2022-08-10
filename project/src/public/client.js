@@ -1,7 +1,8 @@
 let store = {
+    clickedRover: "",
     roverData: "",
     roverPhotos: "",
-    user: { name: "Student" },
+    user: { name: "Martian" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
@@ -21,12 +22,12 @@ const render = async(root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
+    let { rovers, apod, user } = state
 
     return `
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
+            ${Greeting(user.name)}
             <section>
                 <h3>Put things on the page!</h3>
                 <p>Here is an example section.</p>
@@ -39,6 +40,7 @@ const App = (state) => {
                     but generally help with discoverability of relevant imagery.
                 </p>
                 ${ImageOfTheDay(apod)}
+                ${Buttons(rovers)}
             </section>
         </main>
         <footer></footer>
@@ -63,6 +65,18 @@ const Greeting = (name) => {
     return `
         <h1>Hello!</h1>
     `
+}
+
+const Buttons = (rovers) => {
+    return rovers
+        .map((rover) => {
+            return `<button class="btn" onclick="selectedRover('${rover}')">${rover}</button>`
+        }).join("")
+}
+
+const selectedRover = (selectedRover) => {
+    updateStore(store, { clickedRover: selectedRover })
+
 }
 
 // Example of a pure function that renders infomation requested from the backend
