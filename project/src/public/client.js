@@ -1,4 +1,6 @@
 let store = {
+    roverData: "",
+    roverPhotos: "",
     user: { name: "Student" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
@@ -91,8 +93,24 @@ const ImageOfTheDay = (apod) => {
 // ------------------------------------------------------  API CALLS
 
 // Example API call
-const getImageOfTheDay = (state) => {
-    fetch(`http://localhost:3000/apod`)
+const getImageOfTheDay = async(state) => {
+    await fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
         .then(apod => updateStore(store, { apod }))
+}
+
+//API call rover manifest
+
+const getRoverManifest = async(rover) => {
+    await fetch(`http://localhost:3000/roverData/${rover}`)
+        .then(res => res.json())
+        .then(roverData => updateStore(store, { roverData }))
+}
+
+//API Call rover Photos
+
+const getRoverPhotos = async(rover) => {
+    await fetch(`http://localhost:3000/roverPhotos/${rover}`)
+        .then(res => res.json())
+        .then(roverPhotos => updateStore(store, { roverPhotos }))
 }
