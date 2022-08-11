@@ -22,7 +22,7 @@ const render = async(root, state) => {
 
 // create content
 const App = (state) => {
-    let { rovers, apod, user, roverData, clickedRover } = state
+    let { rovers, apod, user, roverData, clickedRover, roverPhotos } = state
     return `
         <header></header>
         <main>
@@ -41,7 +41,7 @@ const App = (state) => {
                 ${ImageOfTheDay(apod)}
                 ${Buttons(rovers)}
                 ${roverManifest(roverData, clickedRover)}
-
+                ${roverPictures(roverPhotos, clickedRover)}
             </section>
         </main>
         <footer></footer>
@@ -57,17 +57,17 @@ window.addEventListener('load', () => {
 
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const Greeting = (name) => {
-    if (name) {
-        return `
+        if (name) {
+            return `
             <h1>Welcome, ${name}!</h1>
         `
-    }
+        }
 
-    return `
+        return `
         <h1>Hello!</h1>
     `
-}
-
+    }
+    // create Buttons for each rover
 const Buttons = (rovers) => {
     return rovers
         .map((rover) => {
@@ -75,12 +75,16 @@ const Buttons = (rovers) => {
         }).join("")
 }
 
+// set the selected rover
 const selectedRover = (selectedRover) => {
     updateStore(store, { clickedRover: selectedRover });
     getRoverManifest(selectedRover)
+    getRoverPhotos(selectedRover)
+
 
 }
 
+// add rover manifests
 const roverManifest = (manifest, clickedRover) => {
     if (!manifest) {
         getRoverManifest(clickedRover)
@@ -95,6 +99,19 @@ const roverManifest = (manifest, clickedRover) => {
 
 }
 
+//add rover Photos
+const roverPictures = (roverPhotos, clickedRover) => {
+    if (!roverPhotos) {
+        getRoverPhotos(clickedRover)
+    }
+    let data = true && roverPhotos.photos.latest_photos
+    return data.map(x => {
+        return `
+            <img class="img" src="${x.img_src}" />
+            <div class="date"> Date: ${x.earth_date}</div>
+        `
+    }).join("")
+}
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
@@ -115,7 +132,7 @@ const ImageOfTheDay = (apod) => {
         `)
     } else {
         return (`
-            <img src="${apod && apod.image.url}" height="350px" width="100%" />
+            <img src="${apod && apod.image.url}" height="auto" width="350px" />
             <p>${apod && apod.image.explanation}</p>
         `)
     }
