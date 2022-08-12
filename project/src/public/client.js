@@ -1,5 +1,5 @@
 let store = {
-    clickedRover: "Spirit",
+    clickedRover: "",
     roverData: "",
     roverPhotos: "",
     user: { name: "Martian" },
@@ -23,29 +23,48 @@ const render = async(root, state) => {
 // create content
 const App = (state) => {
     let { rovers, apod, user, roverData, clickedRover, roverPhotos } = state
-    return `
-        <header></header>
-        <main>
-            ${Greeting(user.name)}
-            <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                ${ImageOfTheDay(apod)}
-                ${Buttons(rovers)}
-                ${roverManifest(roverData, clickedRover)}
-                ${roverPictures(roverPhotos, clickedRover)}
-            </section>
-        </main>
-        <footer></footer>
-    `
+    if (clickedRover == "") {
+        return `
+        <header>
+        ${Buttons(rovers)}
+        ${ButtonApod(apod)}
+        ${Greeting(user.name)}
+        <div class="blink">PLEASE CHOOSE A ROVER OR THE APOD</div>
+        </header>`
+    } else if (clickedRover == "APOD") {
+        return `
+        <header>
+        ${Buttons(rovers)}
+        ${ButtonApod(apod)}
+        </header>
+            <main>
+                <section>
+                    <p>
+                        One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
+                        the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
+                        This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
+                        applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
+                        explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
+                        but generally help with discoverability of relevant imagery.
+                    </p>
+                    ${ImageOfTheDay(apod)}
+                    </section>
+            </main>
+            <footer></footer>`
+    } else {
+        return `
+        <header>
+        ${Buttons(rovers)}
+        ${ButtonApod(apod)}
+        </header>
+            <main>
+            Rover Info:
+            <div>${roverManifest(roverData, clickedRover)}</div>
+            Latest Photos:
+            <div>${roverPictures(roverPhotos, clickedRover)}</div>
+            </main>
+            <footer></footer>`
+    }
 }
 
 // listening for load event because page should load before any JS is called
@@ -69,10 +88,17 @@ const Greeting = (name) => {
     }
     // create Buttons for each rover
 const Buttons = (rovers) => {
-    return rovers
-        .map((rover) => {
-            return `<button class="btn" onclick="selectedRover('${rover}')">${rover}</button>`
-        }).join("")
+        return rovers
+            .map((rover) => {
+                return `<button class="btn" onclick="selectedRover('${rover}')">${rover}</button>
+            `
+            }).join("")
+    }
+    // Create Button for APOD
+
+const ButtonApod = (apod) => {
+    return `<button class="btn" onclick="selectedRover('APOD')">APOD</button>
+    `
 }
 
 // set the selected rover
@@ -80,6 +106,7 @@ const selectedRover = (selectedRover) => {
     updateStore(store, { clickedRover: selectedRover });
     getRoverManifest(selectedRover)
     getRoverPhotos(selectedRover)
+    console.log(selectedRover)
 
 
 }
@@ -90,11 +117,11 @@ const roverManifest = (manifest, clickedRover) => {
         getRoverManifest(clickedRover)
     }
     let roverData = manifest && manifest.data.photo_manifest
-    return `<div>
-    <p>Name: ${roverData.name}</p>
-    <p>Launch Date: ${roverData.launch_date}</p>
-    <p>Landing Date: ${roverData.landing_date}</p>
-    <p>Status: ${roverData.status}</p>
+    return `<div class="manifest">
+    Name: ${roverData.name}
+    Launch Date: ${roverData.launch_date}
+    Landing Date: ${roverData.landing_date}
+    Status: ${roverData.status}
     </div>`
 
 }
@@ -104,11 +131,11 @@ const roverPictures = (roverPhotos, clickedRover) => {
     if (!roverPhotos) {
         getRoverPhotos(clickedRover)
     }
-    let data = true && roverPhotos.photos.latest_photos
-    return data.map(x => {
+    let data = roverPhotos.photos.latest_photos
+    return data.map(rover => {
         return `
-            <img class="img" src="${x.img_src}" />
-            <div class="date"> Date: ${x.earth_date}</div>
+        <div class="img"><img class="img" src="${rover.img_src}" /></div>
+            <div class="date"> Date: ${rover.earth_date}</div>
         `
     }).join("")
 }
@@ -132,7 +159,7 @@ const ImageOfTheDay = (apod) => {
         `)
     } else {
         return (`
-            <img src="${apod && apod.image.url}" height="auto" width="350px" />
+            <img class="img" src="${apod && apod.image.url}" />
             <p>${apod && apod.image.explanation}</p>
         `)
     }
