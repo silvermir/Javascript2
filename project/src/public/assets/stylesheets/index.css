@@ -151,4 +151,6 @@ footer {
 
 /* -------------------  LARGE SCREENS  -------------- */
 
-@media (min-width: 1824px) {}
+@media (min-width: 1824px) {
+    /* use mobile */
+}
