@@ -31,6 +31,7 @@ const App = (state) => {
         ${Greeting(user.name)}
         <div class="blink">PLEASE CHOOSE A ROVER OR THE APOD</div>
         </header>`
+
     } else if (clickedRover == "APOD") {
         return `
         <header>
@@ -50,7 +51,7 @@ const App = (state) => {
                     ${ImageOfTheDay(apod)}
                     </section>
             </main>
-            <footer></footer>`
+            <footer><a href="https://api.nasa.gov/">Nasa API</a></footer>`
     } else {
         return `
         <header>
@@ -58,12 +59,12 @@ const App = (state) => {
         ${ButtonApod(apod)}
         </header>
             <main>
-            Rover Info:
-            <div>${roverManifest(roverData, clickedRover)}</div>
-            Latest Photos:
-            <div>${roverPictures(roverPhotos, clickedRover)}</div>
+            <div class="info">Rover Info:</div>
+            <div class="manifest">${roverManifest(roverData, clickedRover)}</div>
+            <br><div class="info">latest Photos:</div>
+            <div class="gallery">${roverPictures(roverPhotos, clickedRover)}</div>
             </main>
-            <footer></footer>`
+            <footer><a href="https://api.nasa.gov/">Nasa API</a></footer>`
     }
 }
 
@@ -76,22 +77,18 @@ window.addEventListener('load', () => {
 
 // Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
 const Greeting = (name) => {
-        if (name) {
-            return `
-            <h1>Welcome, ${name}!</h1>
-        `
-        }
-
+    if (name) {
         return `
-        <h1>Hello!</h1>
-    `
+            <div class="welcome"><h1>Welcome, ${name}!</h1></div>
+        `
     }
-    // create Buttons for each rover
+}
+
+// create Buttons for each rover
 const Buttons = (rovers) => {
         return rovers
             .map((rover) => {
-                return `<button class="btn" onclick="selectedRover('${rover}')">${rover}</button>
-            `
+                return `<button class="btn" onclick="selectedRover('${rover}')">${rover}</button>`
             }).join("")
     }
     // Create Button for APOD
@@ -118,29 +115,38 @@ const roverManifest = (manifest, clickedRover) => {
     }
     let roverData = manifest && manifest.data.photo_manifest
     return `<div class="manifest">
-    Name: ${roverData.name}
-    Launch Date: ${roverData.launch_date}
-    Landing Date: ${roverData.landing_date}
-    Status: ${roverData.status}
+    <p>Name: ${roverData.name}</p>
+    <p>Launch Date: ${roverData.launch_date}</p>
+    <p>Landing Date: ${roverData.landing_date}</p>
+    ${statusColor(manifest)}
     </div>`
+}
+
+const statusColor = (manifest) => {
+    let data = manifest && manifest.data.photo_manifest
+    if (data.status == "active") {
+        return `<div class="statusActive">Status: ${data.status}</div>`
+    } else {
+        return `<div class="statusComplete">Status: ${data.status}</div>`
+    }
 
 }
 
 //add rover Photos
 const roverPictures = (roverPhotos, clickedRover) => {
-    if (!roverPhotos) {
-        getRoverPhotos(clickedRover)
+        if (!roverPhotos) {
+            getRoverPhotos(clickedRover)
+        }
+        let data = roverPhotos.photos.latest_photos
+        return data.map(rover => {
+            return `
+                <div class="content"><img src="${rover.img_src}"/><div>Date: ${rover.earth_date}</div></div>
+                `
+        }).join("")
     }
-    let data = roverPhotos.photos.latest_photos
-    return data.map(rover => {
-        return `
-        <div class="img"><img class="img" src="${rover.img_src}" /></div>
-            <div class="date"> Date: ${rover.earth_date}</div>
-        `
-    }).join("")
-}
-
-// Example of a pure function that renders infomation requested from the backend
+    //<p>Date: ${rover.earth_date}</p>
+    //<div class="date"> Date: ${rover.earth_date}</div>
+    // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
 
     // If image does not already exist, or it is not from today -- request it again
@@ -159,7 +165,7 @@ const ImageOfTheDay = (apod) => {
         `)
     } else {
         return (`
-            <img class="img" src="${apod && apod.image.url}" />
+            <img class="apodImg" src="${apod && apod.image.url}" />
             <p>${apod && apod.image.explanation}</p>
         `)
     }
